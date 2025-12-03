@@ -40,7 +40,12 @@ export function AddTransactionButton({ categories, accounts }: AddTransactionBut
         title="添加交易"
       >
         <TransactionForm
-          categories={categories}
+          categories={categories.filter(
+            (cat) => cat.type === 'EXPENSE' || cat.type === 'INCOME'
+          ).map(cat => ({
+            ...cat,
+            type: cat.type === 'EXPENSE' ? 'EXPENSE' : 'INCOME'
+          }))}
           accounts={accounts}
           onSuccess={() => setIsOpen(false)}
         />
