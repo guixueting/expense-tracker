@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model User {
+  id            String        @id @default(cuid())
+  email         String        @unique
+  name          String?
+  password      String
+  avatar        String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  transactions  Transaction[]
+  categories    Category[]
+  accounts      Account[]
+}
+
+model Account {
+  id            String        @id @default(cuid())
+  name          String
+  type          String        @default("CASH")
+  balance       Float         @default(0)
+  currency      String        @default("CNY")
+  userId        String
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions  Transaction[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([userId])
+}
+
+model Category {
+  id            String        @id @default(cuid())
+  name          String
+  icon          String?
+  color         String        @default("#6366f1")
+  type          String
+  userId        String
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions  Transaction[]
+  createdAt     DateTime      @default(now())
+
+  @@unique([name, userId, type])
+  @@index([userId])
+}
+
+model Transaction {
+  id          String    @id @default(cuid())
+  amount      Float
+  type        String
+  note        String?
+  date        DateTime  @default(now())
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id])
+  accountId   String
+  account     Account   @relation(fields: [accountId], references: [id])
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId, date])
+  @@index([categoryId])
+  @@index([accountId])
+}
