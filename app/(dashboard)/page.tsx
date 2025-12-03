@@ -111,7 +111,12 @@ async function DashboardContent() {
           <p className="text-slate-500 mt-1">这是你的财务概览</p>
         </div>
         <AddTransactionButton 
-          categories={data.categories} 
+          categories={data.categories.filter(
+            (cat) => cat.type === 'EXPENSE' || cat.type === 'INCOME'
+          ).map(cat => ({
+            ...cat,
+            type: cat.type === 'EXPENSE' ? 'EXPENSE' : 'INCOME'
+          }))} 
           accounts={data.accounts} 
         />
       </div>

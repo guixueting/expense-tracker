@@ -11,7 +11,7 @@ interface Category {
   name: string
   icon: string | null
   color: string
-  type: 'INCOME' | 'EXPENSE'
+  type: string
 }
 
 interface Account {

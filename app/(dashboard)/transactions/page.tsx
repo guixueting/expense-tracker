@@ -48,7 +48,12 @@ async function TransactionsContent() {
           </p>
         </div>
         <AddTransactionButton 
-          categories={data.categories} 
+          categories={data.categories.filter(
+            (cat) => cat.type === 'EXPENSE' || cat.type === 'INCOME'
+          ).map(cat => ({
+            ...cat,
+            type: cat.type === 'EXPENSE' ? 'EXPENSE' : 'INCOME'
+          }))} 
           accounts={data.accounts} 
         />
       </div>
